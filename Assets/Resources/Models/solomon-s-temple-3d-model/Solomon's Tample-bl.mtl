@@ -1,0 +1,14 @@
+# Blender 4.0.2 MTL File: 'None'
+# www.blender.org
+
+newmtl Skin.002
+Ka 1.000000 1.000000 1.000000
+Ks 0.118182 0.118182 0.118182
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/Admin/Desktop/Новая папка/solomon-s-temple-3d-model/Solomon's Tample_LP_None_BaseColor.png
+map_Ns C:/Users/Admin/Desktop/Новая папка/solomon-s-temple-3d-model/Solomon's Tample_LP_None_Roughness.png
+map_refl C:/Users/Admin/Desktop/Новая папка/solomon-s-temple-3d-model/Solomon's Tample_LP_None_Metallic.png
+map_d C:/Users/Admin/Desktop/Новая папка/solomon-s-temple-3d-model/Solomon's Tample_LP_None_BaseColor.png
+map_Bump -bm 1.000000 C:/Users/Admin/Desktop/Новая папка/solomon-s-temple-3d-model/Solomon's Tample_LP_None_Normal.png
