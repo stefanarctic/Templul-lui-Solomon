@@ -6,9 +6,10 @@ public class PlayerMovement : MonoBehaviour
     public CharacterController controller;
 
     public float speed = 12f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 3f;
 
+    [Header("Jumping")]
+    public float jumpHeight = 3f;
+    public float gravity = -9.81f;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundmask;
@@ -16,13 +17,21 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public Vector3 move;
     Vector3 velocity;
-    public bool isGrounded;
+    [SerializeField]
+    private bool isGrounded;
 
     [Header("Crouching")]
-    public string crouchKey = "left shift";
+    public KeyCode crouchKey = KeyCode.LeftShift;
+    // public string crouchKey = "left shift";
     public bool isCrouching = false;
     public Transform ceilingCheck;
     public float ceilingDistance = 0.4f;
+
+    [Header("Sprinting")]
+    public KeyCode sprintKey = KeyCode.LeftControl;
+    // public string sprintKey = "left control";
+    public float speedAmplifier = 2f;
+    public bool isSprinting = false;
 
     // Update is called once per frame
     void Update()
@@ -50,10 +59,16 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
-        if(Input.GetKeyDown(crouchKey))
+        if (Input.GetKeyDown(crouchKey))
         {
             Crouch();
         }
+
+        if (Input.GetKeyDown(sprintKey))
+            ActivateSprinting();
+
+        if (Input.GetKeyUp(sprintKey))
+            DisableSprinting();
     }
 
     void ActivateCrouching()
@@ -80,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Crouch()
     {
-        if(isCrouching)
+        if (isCrouching)
         {
             DisableCrouching();
             if (Physics.CheckSphere(ceilingCheck.position, ceilingDistance, groundmask))
@@ -92,5 +107,27 @@ public class PlayerMovement : MonoBehaviour
         {
             ActivateCrouching();
         }
+    }
+
+    void ActivateSprinting()
+    {
+        Debug.Log("Activated sprinting");
+        isSprinting = true;
+        speed *= speedAmplifier;
+    }
+
+    void DisableSprinting()
+    {
+        Debug.Log("Disabled sprinting");
+        isSprinting = false;
+        speed /= speedAmplifier;
+    }
+
+    void Sprint()
+    {
+        if (isSprinting == true)
+            DisableSprinting();
+        else
+            ActivateSprinting();
     }
 }
