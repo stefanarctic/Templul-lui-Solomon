@@ -16,6 +16,21 @@ public class PageManager : MonoBehaviour
         }
     }
 
+    public Camera cameraPlayer;
+    public Camera cameraEnvironment;
+
+    public void StartUI()
+    {
+        cameraPlayer.gameObject.SetActive(false);
+        cameraEnvironment.gameObject.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        cameraPlayer.gameObject.SetActive(true);
+        cameraEnvironment.gameObject.SetActive(false);
+    }
+
 
     public Animator locationTextAnimator;
     public MenuScript menuScript;
@@ -78,7 +93,11 @@ public class PageManager : MonoBehaviour
 
     public void Page3Next()
     {
-        NextPage();
+        storyMenu.SetActive(false);
+        menuScript.OnPlay();
+        MenuScript.instance.ShowPauseMenu();
+        MenuScript.instance.HidePauseMenu();
+        StartGame();
     }
 
     public void Page4Next()
@@ -88,7 +107,7 @@ public class PageManager : MonoBehaviour
         menuScript.OnPlay();
         MenuScript.instance.ShowPauseMenu();
         MenuScript.instance.HidePauseMenu();
-        locationTextAnimator.SetTrigger("TriggerFadeIn");
+        locationTextAnimator.SetTrigger("TriggerFadeIn");/**/
     }
 
 }

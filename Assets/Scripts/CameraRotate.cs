@@ -9,7 +9,7 @@ public class CameraRotate : MonoBehaviour
     public float amp = 2.0f;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         transform.LookAt(target);
     }

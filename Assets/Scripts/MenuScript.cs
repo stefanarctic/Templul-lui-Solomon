@@ -62,7 +62,7 @@ public class MenuScript : MonoBehaviour
         {
             ActivateInteriorMusic();
         }
-        audioSourceVolume = audioSource.volume;
+        //audioSourceVolume = audioSource.volume;
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 1)
             OnPlay();
         //volumeSlider.value = audioSourceVolume;
