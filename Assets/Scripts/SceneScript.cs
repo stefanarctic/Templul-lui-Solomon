@@ -7,6 +7,11 @@ public class SceneScript : MonoBehaviour
     public Camera cameraPlayer;
     public Camera cameraEnvironment;
 
+    private void Start()
+    {
+        StartUI();
+    }
+
     public void StartUI()
     {
         cameraPlayer.gameObject.SetActive(false);
