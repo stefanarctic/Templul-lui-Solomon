@@ -5,16 +5,26 @@ using UnityEngine;
 public class CameraRotate : MonoBehaviour
 {
 
-    public Transform target;
+    public Transform targetTransform;
+    public Vector3 TargetPosition
+    {
+        get { return target; }
+        set { target = value; }
+    }
+    private Vector3 target;
     public float amp = 2.0f;
 
-    // Start is called before the first frame update
     void Awake()
     {
+        if (!targetTransform)
+        {
+            target = TargetPosition;
+        }
+        else
+            target = targetTransform.position;
         transform.LookAt(target);
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.LookAt(target);
