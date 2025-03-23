@@ -3,8 +3,11 @@ using UnityEngine;
 public class HighlightedObject : MonoBehaviour
 {
     public Transform centerTransform;
+    public GameObject objectInfoUI;
 
     [Header("Highlight Settings")]
+
+    public bool highlight = true;
 
     public QuickOutline.Outline.Mode outlineMode = QuickOutline.Outline.Mode.OutlineVisible;
 

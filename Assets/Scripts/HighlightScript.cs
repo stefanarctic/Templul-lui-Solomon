@@ -1,7 +1,7 @@
 using UnityEngine;
 using QuickOutline;
+using System;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class HighlightScript : MonoBehaviour
 {
@@ -51,7 +51,7 @@ public class HighlightScript : MonoBehaviour
                 return;
             }
 
-            //print($"Highlighted object of {hitObject.name} is {highlightedObjectComponent.name}");
+            print($"Highlighted object of {hitObject.name} is {highlightedObjectComponent.name}");
 
             crossHair.SetActive(true);
 
@@ -88,9 +88,36 @@ public class HighlightScript : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if(objectViewEnabled)
+
+            //Action hidePauseMenu = () => MenuScript.instance.HidePauseMenu();
+            //SetTimeout(0.5f, hidePauseMenu);
+            if (objectViewEnabled)
                 ExitObjectView();
         }
+    }
+
+    delegate void CallbackFunction();
+
+    IEnumerator WaitForSecondsCoroutine(float seconds, CallbackFunction callbackFunction)
+    {
+        yield return new WaitForSeconds(seconds);
+        callbackFunction();
+    }
+
+    IEnumerator WaitForSecondsCoroutine(float seconds, Action callbackFunction)
+    {
+        yield return new WaitForSeconds(seconds);
+        callbackFunction();
+    }
+
+    void SetTimeout(float seconds, CallbackFunction callbackFunction)
+    {
+        StartCoroutine(WaitForSecondsCoroutine(seconds, callbackFunction));
+    }
+
+    void SetTimeout(float seconds, Action callbackFunction)
+    {
+        StartCoroutine(WaitForSecondsCoroutine(seconds, callbackFunction));
     }
 
     public void EnableObjectView(GameObject obj)
@@ -100,15 +127,17 @@ public class HighlightScript : MonoBehaviour
         currentlyFocusedObject = obj;
         //Camera newCamera = Instantiate(playerCamera);
         HighlightedObject objComponent = obj.GetComponent<HighlightedObject>();
-        GameObject cameraObject = Instantiate(playerCamera.gameObject);
-        cameraObject.name = "ObjectViewCamera";
+
+        GameObject cameraObject = new GameObject("ObjectViewCamera");
+        Camera newCamera = cameraObject.AddComponent<Camera>();
+        newCamera.CopyFrom(playerCamera);
+        highlightCamera = newCamera;
+
         Vector3 cameraPosition = playerCamera.gameObject.transform.position;
         cameraObject.transform.position = new Vector3(cameraPosition.x, cameraPosition.y + objComponent.cameraHeight, cameraPosition.z);
-        Destroy(cameraObject.GetComponent<MouseLook>());
 
-        Camera newCamera = cameraObject.GetComponent<Camera>();
-        highlightCamera = newCamera;
         playerCamera.gameObject.SetActive(false);
+        objComponent.objectInfoUI.SetActive(true);
 
         // Disable player movement
         PlayerMovement playerMovement = playerCamera.transform.parent.gameObject.GetComponent<PlayerMovement>();
@@ -125,16 +154,25 @@ public class HighlightScript : MonoBehaviour
         print($"Disabling object view on {currentlyFocusedObject.name}");
         objectViewEnabled = false;
         RemoveOutlineFromObject(currentlyFocusedObject);
+        MenuScript.instance.HidePauseMenu();
+
+        HighlightedObject objComponent = currentlyFocusedObject.GetComponent<HighlightedObject>();
+        objComponent.objectInfoUI.SetActive(false);
         currentlyFocusedObject = null;
 
-        Destroy(highlightCamera.gameObject);
+        
+        if(highlightCamera != null)
+        {
+            Destroy(highlightCamera.gameObject);
+            highlightCamera = null;
+        }
+
         playerCamera.gameObject.SetActive(true);
 
         // Enable player movement
         PlayerMovement playerMovement = playerCamera.transform.parent.gameObject.GetComponent<PlayerMovement>();
         playerMovement.enabled = true;
 
-        highlightCamera = null;
     }
 
     public IEnumerator StartObjectTransition(Camera newCamera, GameObject obj, HighlightedObject objComponent)
@@ -149,8 +187,13 @@ public class HighlightScript : MonoBehaviour
             if (!objectRenderer)
                 objectRenderer = obj.GetComponentInChildren<Renderer>();
 
-            Vector3 modelCenter = objectRenderer.bounds.center;
-            centerPosition = modelCenter;
+            if (objectRenderer != null)
+            {
+                Vector3 modelCenter = objectRenderer.bounds.center;
+                centerPosition = modelCenter;
+            }
+            else
+                centerPosition = obj.transform.position;
         }
 
         print($"Initial distance {Vector3.Distance(newCamera.transform.position, centerPosition)}");
@@ -160,7 +203,8 @@ public class HighlightScript : MonoBehaviour
         cameraRotate.amp = objComponent.cameraSpeed;
         cameraRotate.TargetPosition = centerPosition;
 
-        AddOutlineToObject(obj);
+        if (objComponent.highlight)
+            AddOutlineToObject(obj);
         // Maybe in the future add smooth moving to position
 
         while (Vector3.Distance(newCamera.transform.position, centerPosition) > objComponent.cameraDistance)
