@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,12 +16,15 @@ public class TransitionManager : MonoBehaviour
         }
     }
 
-    public void TransitionShow(GameObject obj, float speed)
+    private static readonly Action defaultCallback = () => Debug.Log("yes");
+
+    public void TransitionShow(GameObject obj, float speed, Action callback = null)
     {
-        StartCoroutine(FadeIn(obj, speed));
+        obj.SetActive(true);
+        StartCoroutine(FadeIn(obj, speed, callback ?? defaultCallback));
     }
 
-    private IEnumerator FadeIn(GameObject obj, float speed)
+    private IEnumerator FadeIn(GameObject obj, float speed, Action callback)
     {
         Image imageComponent = obj.GetComponent<Image>();
         if (imageComponent == null) yield break;
@@ -37,5 +41,7 @@ public class TransitionManager : MonoBehaviour
             imageComponent.color = color;
             yield return null;
         }
+
+        callback?.Invoke();
     }
 }

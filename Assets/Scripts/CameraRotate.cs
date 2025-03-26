@@ -25,9 +25,9 @@ public class CameraRotate : MonoBehaviour
         transform.LookAt(target);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         transform.LookAt(target);
-        transform.Translate(Vector3.right * amp * Time.deltaTime);
+        transform.Translate(Vector3.right * amp * Time.fixedDeltaTime);
     }
 }

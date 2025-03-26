@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +10,7 @@ public class MenuScript : MonoBehaviour
     public GameObject pauseSettings;
     public GameObject pauseMenu;
     public GameObject creditsMenu;
+    public GameObject transitionWall;
     //public GameObject loadingScreen;
 
     public PlayerMovement playerMovement;
@@ -35,6 +35,7 @@ public class MenuScript : MonoBehaviour
     public bool isSettingsMenuOpen = false;
     public bool isCreditsMenuOpen = false;
 
+    public float transitionSpeed = 1.5f;
     private float audioSourceVolume;
 
     public string outsidePyramidName = "OutsidePyramidScene";
@@ -54,19 +55,26 @@ public class MenuScript : MonoBehaviour
     private void Start()
     {
         //audioSource.loop = true;
-        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 1)
-        {
-            ShowMenu();
-            ActivateMusic();
-        } else
-        {
-            ActivateInteriorMusic();
-        }
+
+        //if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 1)
+        //{
+        //    ShowMenu();
+        //    ActivateMusic();
+        //} else
+        //{
+        //    ActivateInteriorMusic();
+        //}
+        //if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 1)
+        //    OnPlay();
+
         //audioSourceVolume = audioSource.volume;
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 1)
-            OnPlay();
         //volumeSlider.value = audioSourceVolume;
         //pauseVolumeSlider.value = audioSourceVolume;
+    }
+
+    private void Awake()
+    {
+        titleMenu.SetActive(true);
     }
 
     private void Update()
@@ -139,6 +147,20 @@ public class MenuScript : MonoBehaviour
         playerMovement.enabled = true;
         mouseLook.enabled = true;
         pauseMenu.SetActive(false);
+    }
+
+    public void GoToTitleMenuFromPauseMenu()
+    {
+        //HidePauseMenu();
+        Time.timeScale = 1f;
+        Action reloadSceneAction = () => HidePauseMenu();
+        reloadSceneAction += () => Cursor.lockState = CursorLockMode.None;
+        reloadSceneAction += () => SceneManager.instance.ReloadSceneAsync();
+
+        //reloadSceneAction += () => Time.timeScale = 0f;
+        //reloadSceneAction += () => Cursor.lockState = CursorLockMode.None;
+        TransitionManager.instance.TransitionShow(transitionWall, transitionSpeed, reloadSceneAction);
+        //SceneManager.instance.ReloadSceneAsync();
     }
 
     public void OnPlay()

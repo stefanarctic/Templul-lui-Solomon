@@ -11,7 +11,7 @@ public class JerusalemScript : MonoBehaviour
     public float sizeMultiplier = 1.5f;
     public float cameraSpeed = 1.5f;
     public float stoppingTime = 0.08f;
-    public float transitionSpeed = 15f;
+    public float transitionSpeed = 1.5f;
 
     private bool isZooming = false;
     private float t = 0f;
@@ -59,7 +59,6 @@ public class JerusalemScript : MonoBehaviour
     {
         //camera.transform.LookAt(gameObject.transform.position);
         isZooming = true;
-        transitionWall.SetActive(true);
         TransitionManager.instance.TransitionShow(transitionWall, transitionSpeed);
     }
 
